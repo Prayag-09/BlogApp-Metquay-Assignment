@@ -28,8 +28,8 @@
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/Prayag-09/BlogApp-Metquay-Assignment.git
-cd BlogApp-Metquay-Assignment
+git clone https://github.com/Prayag-09/Metquay-Blogs.git
+cd Metquay-Blogs
 ```
 
 ### 2. Configure the Backend
