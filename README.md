@@ -1,4 +1,4 @@
-# ✨ Metquay – Sleek Java Blog Platform
+# ✨ Metquay Blogs – Sleek Java Blog Platform
 
 
 ## 🚀 Key Features
