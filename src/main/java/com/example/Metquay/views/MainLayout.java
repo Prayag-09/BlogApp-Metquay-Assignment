@@ -6,13 +6,13 @@ import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.VaadinSession;
-import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 
 /**
  * @author prayagtushar
@@ -82,7 +82,7 @@ public class MainLayout extends AppLayout implements BeforeEnterObserver {
         VerticalLayout drawer = new VerticalLayout(postsLink, createPostLink);
         drawer.getStyle()
                 .set("padding", "20px")
-                .set("background", "#f4f4f5"); // Light gray for drawer
+                .set("background", "#f4f4f5");
         addToDrawer(drawer);
     }
 
@@ -98,7 +98,7 @@ public class MainLayout extends AppLayout implements BeforeEnterObserver {
 
     private void styleNavLink(RouterLink link) {
         link.getStyle()
-                .set("color", "#333333") // Dark text for Light Mode
+                .set("color", "#333333")
                 .set("padding", "10px 20px")
                 .set("border-radius", "8px")
                 .set("text-decoration", "none")
@@ -107,8 +107,8 @@ public class MainLayout extends AppLayout implements BeforeEnterObserver {
 
         link.getElement().executeJs(
                 "this.addEventListener('mouseover', () => {" +
-                        "  this.style.background = '#e5e7eb';" + // Light gray hover
-                        "  this.style.color = '#007bff';" + // Blue text on hover
+                        "  this.style.background = '#e5e7eb';" +
+                        "  this.style.color = '#007bff';" +
                         "  this.style.transform = 'translateX(5px)';" +
                         "});" +
                         "this.addEventListener('mouseout', () => {" +
