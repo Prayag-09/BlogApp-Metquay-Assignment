@@ -22,6 +22,20 @@
   - Content: 50–10,000 characters
 
 ---
+## Demo
+
+### Frontend
+
+
+https://github.com/user-attachments/assets/7bc0a15a-cb4f-49e6-aa52-ce2fca2e1941
+
+
+### Backend
+
+
+https://github.com/user-attachments/assets/265948b4-a86a-43b6-9a78-b3961cdf296c
+
+
 
 ## ⚙️ Getting Started
 
