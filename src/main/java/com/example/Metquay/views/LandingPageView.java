@@ -23,11 +23,11 @@ public class LandingPageView extends VerticalLayout {
         setSizeFull();
         setAlignItems(Alignment.CENTER);
         setJustifyContentMode(JustifyContentMode.CENTER);
-        getStyle().set("background", "linear-gradient(135deg, #1a1a1a, #2c2c2c)");
+        getStyle().set("background", "linear-gradient(135deg, #f9fafb, #e2e8f0)");
 
         FlexLayout header = createHeader();
         header.setWidthFull();
-        header.getStyle().set("padding", "20px").set("background", "rgba(0, 0, 0, 0.3)");
+        header.getStyle().set("padding", "20px").set("background", "rgba(255, 255, 255, 0.9)");
 
         VerticalLayout heroSection = new VerticalLayout();
         heroSection.setAlignItems(Alignment.CENTER);
@@ -36,10 +36,16 @@ public class LandingPageView extends VerticalLayout {
         heroSection.setPadding(false);
 
         H1 heroTitle = new H1("Share Your Stories");
-        heroTitle.getStyle().set("color", "#ffffff").set("font-size", "3rem").set("text-align", "center"); // Already white
+        heroTitle.getStyle()
+                .set("color", "#1f2937") // Dark gray
+                .set("font-size", "3rem")
+                .set("text-align", "center");
 
         Paragraph heroSubtitle = new Paragraph("Join our community of writers and readers.");
-        heroSubtitle.getStyle().set("color", "#d1d5db").set("font-size", "1.2rem").set("text-align", "center"); // Already light gray
+        heroSubtitle.getStyle()
+                .set("color", "#374151") // Slightly lighter gray
+                .set("font-size", "1.2rem")
+                .set("text-align", "center");
 
         Button getStartedBtn = new Button("Get Started", e -> getUI().ifPresent(ui -> ui.navigate("register")));
         styleButton(getStartedBtn, true);
@@ -53,12 +59,15 @@ public class LandingPageView extends VerticalLayout {
 
     private FlexLayout createHeader() {
         H1 logo = new H1("Metquay Blogs");
-        logo.getStyle().set("color", "#ffffff").set("margin", "0").set("font-size", "1.5rem"); // Already white
+        logo.getStyle()
+                .set("color", "#1f2937") // Dark gray
+                .set("margin", "0")
+                .set("font-size", "1.5rem");
 
         Button loginBtn = new Button("Login", e -> getUI().ifPresent(ui -> ui.navigate("login")));
         styleButton(loginBtn, false);
 
-        Button signupBtn = new Button("Sign Up", e -> getUI().ifPresent(ui -> ui.navigate(" pukregister")));
+        Button signupBtn = new Button("Sign Up", e -> getUI().ifPresent(ui -> ui.navigate("register")));
         styleButton(signupBtn, true);
 
         HorizontalLayout buttonGroup = new HorizontalLayout(loginBtn, signupBtn);
@@ -75,23 +84,34 @@ public class LandingPageView extends VerticalLayout {
     }
 
     private void styleButton(Button button, boolean isPrimary) {
-        button.getStyle()
-                .set("border-radius", "12px")
-                .set("padding", "10px 20px")
-                .set("color", isPrimary ? "#ffffff" : "#d1d5db") // Changed secondary button to light gray
-                .set("background", isPrimary ? "#4db6ac" : "transparent")
-                .set("border", isPrimary ? "none" : "1px solid #4db6ac")
-                .set("cursor", "pointer")
-                .set("transition", "all 0.3s ease");
+        if (isPrimary) {
+            button.getStyle()
+                    .set("border-radius", "12px")
+                    .set("padding", "10px 20px")
+                    .set("color", "#ffffff")
+                    .set("background", "#4db6ac")
+                    .set("border", "none")
+                    .set("cursor", "pointer")
+                    .set("transition", "all 0.3s ease");
+        } else {
+            button.getStyle()
+                    .set("border-radius", "12px")
+                    .set("padding", "10px 20px")
+                    .set("color", "#1f2937") // Dark text
+                    .set("background", "transparent")
+                    .set("border", "1px solid #4db6ac")
+                    .set("cursor", "pointer")
+                    .set("transition", "all 0.3s ease");
+        }
 
         button.getElement().executeJs(
                 "this.addEventListener('mouseover', () => {" +
-                        "  this.style.transform = 'translateY(-2px)';" +
-                        "  this.style.boxShadow = '0 5px 15px rgba(0,0,0,0.5)';" +
+                        "this.style.transform = 'translateY(-2px)';" +
+                        "this.style.boxShadow = '0 5px 15px rgba(0,0,0,0.15)';" +
                         "});" +
                         "this.addEventListener('mouseout', () => {" +
-                        "  this.style.transform = 'translateY(0)';" +
-                        "  this.style.boxShadow = 'none';" +
+                        "this.style.transform = 'translateY(0)';" +
+                        "this.style.boxShadow = 'none';" +
                         "});"
         );
     }

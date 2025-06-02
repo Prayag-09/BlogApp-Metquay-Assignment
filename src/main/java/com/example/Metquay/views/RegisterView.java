@@ -25,19 +25,19 @@ public class RegisterView extends VerticalLayout {
         setSizeFull();
         setAlignItems(Alignment.CENTER);
         setJustifyContentMode(JustifyContentMode.CENTER);
-        getStyle().set("background", "linear-gradient(135deg, #1a1a1a, #2c2c2c)");
+        getStyle().set("background", "linear-gradient(135deg, #f0f4f8, #d9e2ec)");
 
         VerticalLayout card = new VerticalLayout();
         card.setWidth("400px");
         card.setAlignItems(Alignment.CENTER);
         card.getStyle()
-                .set("background", "#2d2d2d")
+                .set("background", "#ffffff")
                 .set("border-radius", "12px")
                 .set("padding", "30px")
-                .set("box-shadow", "0 10px 30px rgba(0,0,0,0.5)");
+                .set("box-shadow", "0 10px 30px rgba(0,0,0,0.1)");
 
         H2 title = new H2("Register");
-        title.getStyle().set("color", "#ffffff");
+        title.getStyle().set("color", "#102a43");
 
         TextField nameField = new TextField("Name");
         styleField(nameField);
@@ -48,106 +48,118 @@ public class RegisterView extends VerticalLayout {
         PasswordField passwordField = new PasswordField("Password");
         styleField(passwordField);
 
-        Button registerButton = new Button("Create Account", e -> handleRegister(apiService, nameField, emailField, passwordField));
-        styleButton(registerButton);
+        PasswordField confirmPasswordField = new PasswordField("Confirm Password");
+        styleField(confirmPasswordField);
 
-        RouterLink loginLink = new RouterLink("Login", LoginView.class);
-        loginLink.getStyle().set("color", "#d1d5db");
+        Button registerButton = new Button("Register");
+        styleButton(registerButton, true);
+
+        registerButton.addClickListener(event -> {
+            String name = nameField.getValue();
+            String email = emailField.getValue();
+            String password = passwordField.getValue();
+            String confirmPassword = confirmPasswordField.getValue();
+
+            if (name.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+                Notification notification = new Notification("Please fill all the fields.");
+                notification.getElement().getStyle()
+                        .set("background", "#4db6ac")
+                        .set("color", "#ffffff")
+                        .set("border-radius", "8px")
+                        .set("padding", "10px");
+                notification.open();
+                return;
+            }
+
+            if (!password.equals(confirmPassword)) {
+                Notification notification = new Notification("Passwords do not match.");
+                notification.getElement().getStyle()
+                        .set("background", "#4db6ac")
+                        .set("color", "#ffffff")
+                        .set("border-radius", "8px")
+                        .set("padding", "10px");
+                notification.open();
+                return;
+            }
+
+            AuthRequestDto request = new AuthRequestDto();
+            request.setName(name);
+            request.setEmail(email);
+            request.setPassword(password);
+
+            try {
+                apiService.register(request);
+                Notification notification = new Notification("Registration successful!");
+                notification.getElement().getStyle()
+                        .set("background", "#4db6ac")
+                        .set("color", "#ffffff")
+                        .set("border-radius", "8px")
+                        .set("padding", "10px");
+                notification.open();
+                getUI().ifPresent(ui -> ui.navigate("posts"));
+            } catch (Exception e) {
+                Notification notification = new Notification("Registration failed: " + e.getMessage());
+                notification.getElement().getStyle()
+                        .set("background", "#4db6ac")
+                        .set("color", "#ffffff")
+                        .set("border-radius", "8px")
+                        .set("padding", "10px");
+                notification.open();
+            }
+        });
+
+        RouterLink loginLink = new RouterLink("Already have an account? Login", LoginView.class);
+        loginLink.getStyle().set("color", "#4db6ac");
 
         RouterLink homeLink = new RouterLink("Back to Home", LandingPageView.class);
-        homeLink.getStyle().set("color", "#d1d5db").set("margin-top", "10px");
+        homeLink.getStyle().set("color", "#4db6ac");
 
-        card.add(title, nameField, emailField, passwordField, registerButton, loginLink, homeLink);
+        card.add(title, nameField, emailField, passwordField, confirmPasswordField, registerButton, loginLink, homeLink);
+
         add(card);
-    }
-
-    private void handleRegister(ApiService apiService, TextField nameField, TextField emailField, PasswordField passwordField) {
-        String name = nameField.getValue().trim();
-        String email = emailField.getValue().trim();
-        String password = passwordField.getValue();
-
-        if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
-            Notification.show("Please fill in all fields");
-            return;
-        }
-
-        if (name.length() < 2) {
-            Notification.show("Name must be at least 2 characters long");
-            return;
-        }
-
-        if (!email.contains("@") || !email.contains(".")) {
-            Notification.show("Please enter a valid email address");
-            return;
-        }
-
-        if (password.length() < 6) {
-            Notification.show("Password must be at least 6 characters long");
-            return;
-        }
-
-        AuthRequestDto request = new AuthRequestDto();
-        request.setName(name);
-        request.setEmail(email);
-        request.setPassword(password);
-
-        try {
-            apiService.register(request);
-            getUI().ifPresent(ui -> ui.navigate("posts"));
-        } catch (Exception ex) {
-            handleError("Registration failed: " + ex.getMessage(), null);
-        }
-    }
-
-    private void handleError(String message, String redirectRoute) {
-        Notification.show(message);
-        if (redirectRoute != null) {
-            getUI().ifPresent(ui -> ui.navigate(redirectRoute));
-        }
     }
 
     private void styleField(com.vaadin.flow.component.Component field) {
         field.getElement().getStyle()
                 .set("width", "100%")
                 .set("border-radius", "8px")
-                .set("background", "#3a3a3a")
-                .set("border", "1px solid #4b4b4b")
+                .set("background", "#f9fafb")
+                .set("border", "1px solid #cbd5e1")
                 .set("padding", "10px")
                 .set("margin-bottom", "15px")
-                .set("color", "#ffffff");
+                .set("color", "#102a43");
 
         field.getElement().executeJs(
-                "this.labelElement.style.color = '#d1d5db';" +
+                "this.labelElement.style.color = '#486581';" +
                         "this.addEventListener('focus', () => {" +
                         "  this.style.borderColor = '#4db6ac';" +
                         "  this.style.boxShadow = '0 0 5px rgba(77, 182, 172, 0.3)';" +
                         "});" +
                         "this.addEventListener('blur', () => {" +
-                        "  this.style.borderColor = '#4b4b4b';" +
+                        "  this.style.borderColor = '#cbd5e1';" +
                         "  this.style.boxShadow = 'none';" +
                         "});"
         );
     }
 
-    private void styleButton(Button button) {
+    private void styleButton(Button button, boolean isPrimary) {
         button.getStyle()
-                .set("width", "100%")
                 .set("border-radius", "12px")
                 .set("padding", "12px")
-                .set("background", "#4db6ac")
-                .set("color", "#ffffff")
-                .set("border", "none")
+                .set("background", isPrimary ? "#4db6ac" : "transparent")
+                .set("color", isPrimary ? "#ffffff" : "#486581")
+                .set("border", isPrimary ? "none" : "1px solid #4db6ac")
                 .set("cursor", "pointer")
                 .set("transition", "all 0.3s ease");
 
         button.getElement().executeJs(
                 "this.addEventListener('mouseover', () => {" +
-                        "  this.style.background = '#26a69a';" +
+                        "  this.style.background = '" + (isPrimary ? "#26a69a" : "rgba(77, 182, 172, 0.1)") + "';" +
                         "  this.style.transform = 'translateY(-2px)';" +
-                        "  this.style.boxShadow = '0 5px 15px rgba(0,0,0,0.5)';" +
+                        "  this.style.boxShadow = '0 5px 15px rgba(0,0,0,0.1)';" +
                         "});" +
                         "this.addEventListener('mouseout', () => {" +
-                        "  this.style.background = '#4db6ac';" +
+                        "  this.style.background = '" + (isPrimary ? "#4db6ac" : "transparent") + "';" +
                         "  this.style.transform = 'translateY(0)';" +
                         "  this.style.boxShadow = 'none';" +
                         "});"

@@ -27,7 +27,7 @@ public class PostsView extends VerticalLayout implements BeforeEnterObserver {
         this.apiService = apiService;
 
         setSizeFull();
-        getStyle().set("background", "linear-gradient(135deg, #1a1a1a, #2c2c2c)").set("padding", "20px");
+        getStyle().set("background", "#f4f4f5").set("padding", "20px");
 
         initializeLayout();
     }
@@ -44,7 +44,7 @@ public class PostsView extends VerticalLayout implements BeforeEnterObserver {
     private void initializeLayout() {
         H2 title = new H2("Explore Blog Posts");
         title.getStyle()
-                .set("color", "#ffffff") // Already white, kept for clarity
+                .set("color", "#333333")
                 .set("text-align", "center")
                 .set("font-size", "2.5rem")
                 .set("margin-bottom", "30px");
@@ -73,9 +73,9 @@ public class PostsView extends VerticalLayout implements BeforeEnterObserver {
                 VerticalLayout emptyState = new VerticalLayout();
                 emptyState.setAlignItems(Alignment.CENTER);
                 H2 emptyMessage = new H2("No Posts Yet");
-                emptyMessage.getStyle().set("color", "#ffffff").set("text-align", "center"); // Changed to white
+                emptyMessage.getStyle().set("color", "#333333").set("text-align", "center");
                 Paragraph suggestion = new Paragraph("Why not create your first post?");
-                suggestion.getStyle().set("color", "#d1d5db").set("text-align", "center"); // Already light gray
+                suggestion.getStyle().set("color", "#666666").set("text-align", "center");
                 Button createButton = new Button("Write a Post", e -> getUI().ifPresent(ui -> ui.navigate("create-post")));
                 styleButton(createButton);
                 emptyState.add(emptyMessage, suggestion, createButton);
@@ -95,9 +95,9 @@ public class PostsView extends VerticalLayout implements BeforeEnterObserver {
         card.setWidth("600px");
         card.setPadding(true);
         card.getStyle()
-                .set("background", "#2d2d2d")
+                .set("background", "#ffffff")
                 .set("border-radius", "12px")
-                .set("box-shadow", "0 5px 20px rgba(0,0,0,0.5)")
+                .set("box-shadow", "0 4px 12px rgba(0,0,0,0.1)")
                 .set("transition", "transform 0.3s ease, box-shadow 0.3s ease")
                 .set("cursor", "pointer");
 
@@ -110,25 +110,25 @@ public class PostsView extends VerticalLayout implements BeforeEnterObserver {
         card.getElement().executeJs(
                 "this.addEventListener('mouseover', () => {" +
                         "  this.style.transform = 'translateY(-5px)';" +
-                        "  this.style.boxShadow = '0 10px 30px rgba(0,0,0,0.7)';" +
+                        "  this.style.boxShadow = '0 6px 16px rgba(0,0,0,0.15)';" +
                         "});" +
                         "this.addEventListener('mouseout', () => {" +
                         "  this.style.transform = 'translateY(0)';" +
-                        "  this.style.boxShadow = '0 5px 20px rgba(0,0,0,0.5)';" +
+                        "  this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';" +
                         "});"
         );
 
         H3 title = new H3(post.getTitle());
-        title.getStyle().set("color", "#ffffff").set("margin", "0"); // Already white
+        title.getStyle().set("color", "#333333").set("margin", "0");
 
         Paragraph snippet = new Paragraph(truncateContent(post.getContent(), 150));
-        snippet.getStyle().set("color", "#d1d5db").set("font-size", "1rem").set("margin", "10px 0"); // Already light gray
+        snippet.getStyle().set("color", "#666666").set("font-size", "1rem").set("margin", "10px 0");
 
         Paragraph author = new Paragraph("By " + (post.getAuthor() != null ? post.getAuthor().getName() : "Unknown"));
-        author.getStyle().set("color", "#d1d5db").set("font-style", "italic").set("font-size", "0.9rem"); // Changed to light gray
+        author.getStyle().set("color", "#666666").set("font-style", "italic").set("font-size", "0.9rem");
 
         Paragraph date = new Paragraph("Published on " + (post.getCreatedAt() != null ? post.getCreatedAt().toString() : "Unknown"));
-        date.getStyle().set("color", "#d1d5db").set("font-size", "0.9rem"); // Already light gray
+        date.getStyle().set("color", "#666666").set("font-size", "0.9rem");
 
         HorizontalLayout metaLayout = new HorizontalLayout(author, date);
         metaLayout.setWidthFull();
@@ -144,7 +144,13 @@ public class PostsView extends VerticalLayout implements BeforeEnterObserver {
     }
 
     private void handleError(String message, String redirectRoute) {
-        Notification.show(message);
+        Notification notification = new Notification(message);
+        notification.getElement().getStyle()
+                .set("background", "#007bff")
+                .set("color", "#ffffff")
+                .set("border-radius", "8px")
+                .set("padding", "10px");
+        notification.open();
         if (redirectRoute != null) {
             getUI().ifPresent(ui -> ui.navigate(redirectRoute));
         }
@@ -154,7 +160,7 @@ public class PostsView extends VerticalLayout implements BeforeEnterObserver {
         button.getStyle()
                 .set("border-radius", "12px")
                 .set("padding", "12px 20px")
-                .set("background", "#4db6ac")
+                .set("background", "#007bff")
                 .set("color", "#ffffff")
                 .set("border", "none")
                 .set("cursor", "pointer")
@@ -162,12 +168,12 @@ public class PostsView extends VerticalLayout implements BeforeEnterObserver {
 
         button.getElement().executeJs(
                 "this.addEventListener('mouseover', () => {" +
-                        "  this.style.background = '#26a69a';" +
+                        "  this.style.background = '#0056b3';" +
                         "  this.style.transform = 'translateY(-2px)';" +
-                        "  this.style.boxShadow = '0 5px 15px rgba(0,0,0,0.5)';" +
+                        "  this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';" +
                         "});" +
                         "this.addEventListener('mouseout', () => {" +
-                        "  this.style.background = '#4db6ac';" +
+                        "  this.style.background = '#007bff';" +
                         "  this.style.transform = 'translateY(0)';" +
                         "  this.style.boxShadow = 'none';" +
                         "});"

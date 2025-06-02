@@ -14,6 +14,9 @@ import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 
+/**
+ * @author prayagtushar
+ */
 public class MainLayout extends AppLayout implements BeforeEnterObserver {
 
     private final ApiService apiService;
@@ -25,44 +28,48 @@ public class MainLayout extends AppLayout implements BeforeEnterObserver {
         this.apiService = apiService;
         createHeader();
         createDrawer();
-
         setDrawerStyle();
     }
 
     private void createHeader() {
         H1 logo = new H1("Metquay Blogs");
-        logo.getStyle().set("color", "#ffffff").set("font-size", "1.5rem");
+        logo.getStyle()
+                .set("color", "#333333")
+                .set("font-size", "1.5rem");
 
         logoutButton = new Button("Logout", e -> handleLogout());
         logoutButton.getStyle()
-                .set("border-radius", "12px")
+                .set("border-radius", "8px")
                 .set("padding", "8px 16px")
-                .set("color", "#ffffff") // Changed to white for better visibility
-                .set("background", "transparent")
-                .set("border", "1px solid #4db6ac")
+                .set("color", "#ffffff")
+                .set("background", "#007bff")
+                .set("border", "none")
                 .set("cursor", "pointer")
                 .set("transition", "all 0.3s ease");
 
         logoutButton.getElement().executeJs(
                 "this.addEventListener('mouseover', () => {" +
-                        "  this.style.background = 'rgba(77, 182, 172, 0.2)';" +
+                        "  this.style.background = '#0056b3';" +
                         "  this.style.transform = 'translateY(-2px)';" +
-                        "  this.style.boxShadow = '0 5px 15px rgba(0,0,0,0.5)';" +
+                        "  this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';" +
                         "});" +
                         "this.addEventListener('mouseout', () => {" +
-                        "  this.style.background = 'transparent';" +
+                        "  this.style.background = '#007bff';" +
                         "  this.style.transform = 'translateY(0)';" +
                         "  this.style.boxShadow = 'none';" +
                         "});"
         );
 
         DrawerToggle toggle = new DrawerToggle();
-        toggle.getStyle().set("color", "#ffffff");
+        toggle.getStyle().set("color", "#333333");
 
         HorizontalLayout header = new HorizontalLayout(toggle, logo, logoutButton);
         header.setWidthFull();
         header.setAlignItems(Alignment.CENTER);
-        header.getStyle().set("padding", "0 20px");
+        header.getStyle()
+                .set("padding", "0 20px")
+                .set("background", "#ffffff")
+                .set("border-bottom", "1px solid #e5e7eb");
         addToNavbar(header);
     }
 
@@ -73,7 +80,9 @@ public class MainLayout extends AppLayout implements BeforeEnterObserver {
         styleNavLink(createPostLink);
 
         VerticalLayout drawer = new VerticalLayout(postsLink, createPostLink);
-        drawer.getStyle().set("padding", "20px").set("background", "transparent");
+        drawer.getStyle()
+                .set("padding", "20px")
+                .set("background", "#f4f4f5"); // Light gray for drawer
         addToDrawer(drawer);
     }
 
@@ -89,7 +98,7 @@ public class MainLayout extends AppLayout implements BeforeEnterObserver {
 
     private void styleNavLink(RouterLink link) {
         link.getStyle()
-                .set("color", "#d1d5db")
+                .set("color", "#333333") // Dark text for Light Mode
                 .set("padding", "10px 20px")
                 .set("border-radius", "8px")
                 .set("text-decoration", "none")
@@ -98,13 +107,13 @@ public class MainLayout extends AppLayout implements BeforeEnterObserver {
 
         link.getElement().executeJs(
                 "this.addEventListener('mouseover', () => {" +
-                        "  this.style.background = '#4db6ac';" +
-                        "  this.style.color = '#ffffff';" +
+                        "  this.style.background = '#e5e7eb';" + // Light gray hover
+                        "  this.style.color = '#007bff';" + // Blue text on hover
                         "  this.style.transform = 'translateX(5px)';" +
                         "});" +
                         "this.addEventListener('mouseout', () => {" +
                         "  this.style.background = 'transparent';" +
-                        "  this.style.color = '#d1d5db';" +
+                        "  this.style.color = '#333333';" +
                         "  this.style.transform = 'translateX(0)';" +
                         "});"
         );
@@ -114,12 +123,13 @@ public class MainLayout extends AppLayout implements BeforeEnterObserver {
         getElement().executeJs(
                 "const drawer = this.shadowRoot.querySelector('[part=\"drawer\"]');" +
                         "if (drawer) {" +
-                        "  drawer.style.background = '#2d2d2d';" +
+                        "  drawer.style.background = '#f4f4f5';" +
                         "  drawer.querySelectorAll('*').forEach(el => el.style.background = 'transparent');" +
                         "}" +
                         "const navbar = this.shadowRoot.querySelector('[part=\"navbar\"]');" +
                         "if (navbar) {" +
-                        "  navbar.style.background = 'linear-gradient(135deg, #1a1a1a, #2c2c2c)';" +
+                        "  navbar.style.background = '#ffffff';" +
+                        "  navbar.style.borderBottom = '1px solid #e5e7eb';" +
                         "}"
         );
     }

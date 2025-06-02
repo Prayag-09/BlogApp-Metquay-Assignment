@@ -11,7 +11,11 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 
+/**
+ * @author prayagtushar
+ */
 @Route("login")
 @PageTitle("Login")
 public class LoginView extends VerticalLayout {
@@ -25,36 +29,34 @@ public class LoginView extends VerticalLayout {
         setSizeFull();
         setAlignItems(Alignment.CENTER);
         setJustifyContentMode(JustifyContentMode.CENTER);
-        getStyle().set("background", "linear-gradient(135deg, #1a1a1a, #2c2c2c)");
+        getStyle().set("background", "#f4f4f5"); // Light gray background
 
         VerticalLayout card = new VerticalLayout();
         card.setWidth("400px");
         card.setAlignItems(Alignment.CENTER);
         card.getStyle()
-                .set("background", "#2d2d2d")
+                .set("background", "#ffffff") // White card
                 .set("border-radius", "12px")
                 .set("padding", "30px")
-                .set("box-shadow", "0 10px 30px rgba(0,0,0,0.5)");
+                .set("box-shadow", "0 4px 12px rgba(0,0,0,0.1)"); // Lighter shadow
 
         H2 title = new H2("Login");
-        title.getStyle().set("color", "#ffffff");
+        title.getStyle().set("color", "#333333"); // Dark text
 
         TextField emailField = new TextField("Email");
-        emailField.setValue("test@gmail.com");
         styleField(emailField);
 
         PasswordField passwordField = new PasswordField("Password");
-        passwordField.setValue("Tpass@123");
         styleField(passwordField);
 
         Button loginButton = new Button("Sign In", e -> handleLogin(apiService, emailField, passwordField));
         styleButton(loginButton);
 
         RouterLink registerLink = new RouterLink("Register", RegisterView.class);
-        registerLink.getStyle().set("color", "#d1d5db");
+        registerLink.getStyle().set("color", "#007bff"); // Blue link
 
         RouterLink homeLink = new RouterLink("Back to Home", LandingPageView.class);
-        homeLink.getStyle().set("color", "#d1d5db").set("margin-top", "10px");
+        homeLink.getStyle().set("color", "#007bff").set("margin-top", "10px");
 
         card.add(title, emailField, passwordField, loginButton, registerLink, homeLink);
         add(card);
@@ -65,7 +67,13 @@ public class LoginView extends VerticalLayout {
         String password = passwordField.getValue();
 
         if (email.isEmpty() || password.isEmpty()) {
-            Notification.show("Please fill in all fields");
+            Notification notification = new Notification("Please fill in all fields");
+            notification.getElement().getStyle()
+                    .set("background", "#007bff")
+                    .set("color", "#ffffff")
+                    .set("border-radius", "8px")
+                    .set("padding", "10px");
+            notification.open();
             return;
         }
 
@@ -77,7 +85,13 @@ public class LoginView extends VerticalLayout {
             apiService.login(request);
             getUI().ifPresent(ui -> ui.navigate("posts"));
         } catch (Exception ex) {
-            Notification.show("Login failed: " + ex.getMessage());
+            Notification notification = new Notification("Login failed: " + ex.getMessage());
+            notification.getElement().getStyle()
+                    .set("background", "#007bff")
+                    .set("color", "#ffffff")
+                    .set("border-radius", "8px")
+                    .set("padding", "10px");
+            notification.open();
         }
     }
 
@@ -85,20 +99,20 @@ public class LoginView extends VerticalLayout {
         field.getElement().getStyle()
                 .set("width", "100%")
                 .set("border-radius", "8px")
-                .set("background", "#3a3a3a")
-                .set("border", "1px solid #4b4b4b")
+                .set("background", "#ffffff") // White input background
+                .set("border", "1px solid #d1d5db") // Light gray border
                 .set("padding", "10px")
                 .set("margin-bottom", "15px")
-                .set("color", "#ffffff");
+                .set("color", "#333333"); // Dark text
 
         field.getElement().executeJs(
-                "this.labelElement.style.color = '#d1d5db';" +
+                "this.labelElement.style.color = '#333333';" +
                         "this.addEventListener('focus', () => {" +
-                        "  this.style.borderColor = '#4db6ac';" +
-                        "  this.style.boxShadow = '0 0 5px rgba(77, 182, 172, 0.3)';" +
+                        "  this.style.borderColor = '#007bff';" + // Blue border on focus
+                        "  this.style.boxShadow = '0 0 5px rgba(0,123,255,0.3);" +
                         "});" +
                         "this.addEventListener('blur', () => {" +
-                        "  this.style.borderColor = '#4b4b4b';" +
+                        "  this.style.borderColor = '#d1d5db';" +
                         "  this.style.boxShadow = 'none';" +
                         "});"
         );
@@ -107,9 +121,9 @@ public class LoginView extends VerticalLayout {
     private void styleButton(Button button) {
         button.getStyle()
                 .set("width", "100%")
-                .set("border-radius", "12px")
+                .set("border-radius", "8px")
                 .set("padding", "12px")
-                .set("background", "#4db6ac")
+                .set("background", "#007bff") // Blue button
                 .set("color", "#ffffff")
                 .set("border", "none")
                 .set("cursor", "pointer")
@@ -117,12 +131,12 @@ public class LoginView extends VerticalLayout {
 
         button.getElement().executeJs(
                 "this.addEventListener('mouseover', () => {" +
-                        "  this.style.background = '#26a69a';" +
+                        "  this.style.background = '#0056b3';" + // Darker blue on hover
                         "  this.style.transform = 'translateY(-2px)';" +
-                        "  this.style.boxShadow = '0 5px 15px rgba(0,0,0,0.5)';" +
+                        "  this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';" +
                         "});" +
                         "this.addEventListener('mouseout', () => {" +
-                        "  this.style.background = '#4db6ac';" +
+                        "  this.style.background = '#007bff';" +
                         "  this.style.transform = 'translateY(0)';" +
                         "  this.style.boxShadow = 'none';" +
                         "});"

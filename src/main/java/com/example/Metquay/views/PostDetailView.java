@@ -37,13 +37,13 @@ public class PostDetailView extends VerticalLayout implements BeforeEnterObserve
 
         setSizeFull();
         setAlignItems(Alignment.CENTER);
-        getStyle().set("background", "linear-gradient(135deg, #1a1a1a, #2c2c2c)").set("padding", "20px");
+        getStyle().set("background", "linear-gradient(135deg, #f0f4f8, #d9e2ec)").set("padding", "20px");
     }
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
         if (!apiService.isLoggedIn()) {
-            handleError("Unauthorized access. Please log in.", "login");
+            handleError("Unauthorized access. Please log in.", "posts");
             return;
         }
 
@@ -80,10 +80,10 @@ public class PostDetailView extends VerticalLayout implements BeforeEnterObserve
         card.setWidth("600px");
         card.setAlignItems(Alignment.CENTER);
         card.getStyle()
-                .set("background", "#2d2d2d")
+                .set("background", "#ffffff")
                 .set("border-radius", "12px")
                 .set("padding", "30px")
-                .set("box-shadow", "0 5px 20px rgba(0,0,0,0.5)");
+                .set("box-shadow", "0 5px 20px rgba(0,0,0,0.1)");
 
         if (isEditing) {
             renderEditForm(card);
@@ -96,19 +96,19 @@ public class PostDetailView extends VerticalLayout implements BeforeEnterObserve
 
     private void renderViewMode(VerticalLayout card) {
         H2 title = new H2(post.getTitle());
-        title.getStyle().set("color", "#ffffff"); // Already white
+        title.getStyle().set("color", "#102a43");
 
         Paragraph subtitle = new Paragraph(post.getSubtitle() != null ? post.getSubtitle() : "");
-        subtitle.getStyle().set("color", "#d1d5db").set("font-size", "1.1rem"); // Already light gray
+        subtitle.getStyle().set("color", "#486581").set("font-size", "1.1rem");
 
         Paragraph content = new Paragraph(post.getContent());
-        content.getStyle().set("color", "#d1d5db").set("white-space", "pre-wrap"); // Already light gray
+        content.getStyle().set("color", "#334e68").set("white-space", "pre-wrap");
 
         Paragraph author = new Paragraph("By " + (post.getAuthor() != null ? post.getAuthor().getName() : "Unknown"));
-        author.getStyle().set("color", "#d1d5db").set("font-style", "italic"); // Already light gray
+        author.getStyle().set("color", "#627d98").set("font-style", "italic");
 
         Paragraph date = new Paragraph("Published on " + (post.getCreatedAt() != null ? post.getCreatedAt().toString() : "Unknown"));
-        date.getStyle().set("color", "#d1d5db").set("font-size", "0.9rem"); // Already light gray
+        date.getStyle().set("color", "#627d98").set("font-size", "0.9rem");
 
         HorizontalLayout buttonLayout = new HorizontalLayout();
         buttonLayout.setWidthFull();
@@ -137,7 +137,7 @@ public class PostDetailView extends VerticalLayout implements BeforeEnterObserve
 
     private void renderEditForm(VerticalLayout card) {
         H2 title = new H2("Edit Post");
-        title.getStyle().set("color", "#ffffff"); // Already white
+        title.getStyle().set("color", "#102a43");
 
         TextField titleField = new TextField("Title");
         styleField(titleField);
@@ -181,10 +181,22 @@ public class PostDetailView extends VerticalLayout implements BeforeEnterObserve
             updatedPost = apiService.updatePost(updatedPost);
             post = updatedPost;
             isEditing = false;
-            Notification.show("Post updated successfully!");
+            Notification notification = new Notification("Post updated successfully!");
+            notification.getElement().getStyle()
+                    .set("background", "#4db6ac")
+                    .set("color", "#ffffff")
+                    .set("border-radius", "8px")
+                    .set("padding", "10px");
+            notification.open();
             renderPost();
         } catch (ValidationException e) {
-            Notification.show("Please fill in all required fields.");
+            Notification notification = new Notification("Please fill in all required fields.");
+            notification.getElement().getStyle()
+                    .set("background", "#4db6ac")
+                    .set("color", "#ffffff")
+                    .set("border-radius", "8px")
+                    .set("padding", "10px");
+            notification.open();
         } catch (Exception e) {
             handleError("Failed to update post: " + e.getMessage(), null);
         }
@@ -198,15 +210,14 @@ public class PostDetailView extends VerticalLayout implements BeforeEnterObserve
         dialog.setConfirmText("Delete");
         dialog.setConfirmButtonTheme("error primary");
 
-        // Style the dialog to match the dark theme and ensure text visibility
         dialog.getElement().executeJs(
-                "this.style.setProperty('--lumo-base-color', '#2d2d2d');" +
-                        "this.style.setProperty('--lumo-primary-color', '#ff6f61');" +
-                        "this.style.setProperty('--lumo-primary-text-color', '#ffffff');" +
-                        "this.style.setProperty('--lumo-secondary-text-color', '#d1d5db');" + // For cancel button text
-                        "this.querySelector('h2').style.color = '#ffffff';" + // Header already white
-                        "this.querySelector('vaadin-dialog-content').style.color = '#d1d5db';" + // Body text already light gray
-                        "this.querySelector('[slot=\"cancel-button\"]').style.color = '#d1d5db';" // Cancel button text set to light gray
+                "this.style.setProperty('--lumo-base-color', '#ffffff');" +
+                        "this.style.setProperty('--lumo-color', '#007bff');" +
+                        "this.style.setProperty('--lumo-primary-text-color', '#007bff');" +
+                        "this.style.setProperty('--lumo-secondary-text-color', '#333333');" +
+                        "this.querySelector('h2').style.color = '#333333';" +
+                        "this.querySelector('vaadin-dialog-content').style.color = '#333333';" +
+                        "this.querySelector('[slot=\"cancel-button\"]').style.color = '#333333';"
         );
 
         dialog.addConfirmListener(event -> deletePost());
@@ -216,7 +227,13 @@ public class PostDetailView extends VerticalLayout implements BeforeEnterObserve
     private void deletePost() {
         try {
             apiService.deletePost(post.getId());
-            Notification.show("Post deleted successfully!");
+            Notification notification = new Notification("Post deleted successfully!");
+            notification.getElement().getStyle()
+                    .set("background", "#4db6ac")
+                    .set("color", "#ffffff")
+                    .set("border-radius", "8px")
+                    .set("padding", "10px");
+            notification.open();
             getUI().ifPresent(ui -> ui.navigate("posts"));
         } catch (Exception e) {
             handleError("Failed to delete post: " + e.getMessage(), null);
@@ -224,7 +241,13 @@ public class PostDetailView extends VerticalLayout implements BeforeEnterObserve
     }
 
     private void handleError(String message, String redirectRoute) {
-        Notification.show(message);
+        Notification notification = new Notification(message);
+        notification.getElement().getStyle()
+                .set("background", "#4db6ac")
+                .set("color", "#ffffff")
+                .set("border-radius", "8px")
+                .set("padding", "10px");
+        notification.open();
         if (redirectRoute != null) {
             getUI().ifPresent(ui -> ui.navigate(redirectRoute));
         }
@@ -234,20 +257,20 @@ public class PostDetailView extends VerticalLayout implements BeforeEnterObserve
         field.getElement().getStyle()
                 .set("width", "100%")
                 .set("border-radius", "8px")
-                .set("background", "#3a3a3a")
-                .set("border", "1px solid #4b4b4b")
+                .set("background", "#f9fafb")
+                .set("border", "1px solid #1d5db8")
                 .set("padding", "10px")
                 .set("margin-bottom", "15px")
-                .set("color", "#ffffff"); // Input text is white for visibility
+                .set("color", "#102a43");
 
         field.getElement().executeJs(
-                "this.labelElement.style.color = '#d1d5db';" + // Label is light gray for visibility
+                "this.labelElement.style.color = '#486581';" +
                         "this.addEventListener('focus', () => {" +
                         "  this.style.borderColor = '#4db6ac';" +
                         "  this.style.boxShadow = '0 0 5px rgba(77, 182, 172, 0.3)';" +
                         "});" +
                         "this.addEventListener('blur', () => {" +
-                        "  this.style.borderColor = '#4b4b4b';" +
+                        "  this.style.borderColor = '#cbd5e1';" +
                         "  this.style.boxShadow = 'none';" +
                         "});"
         );
@@ -258,16 +281,16 @@ public class PostDetailView extends VerticalLayout implements BeforeEnterObserve
                 .set("border-radius", "12px")
                 .set("padding", "12px")
                 .set("background", isPrimary ? "#4db6ac" : "transparent")
-                .set("color", isPrimary ? "#ffffff" : "#d1d5db") // Secondary button text changed to light gray
-                .set("border", isPrimary ? "none" : "1px solid #4db6ac") // Changed border color to teal for consistency
+                .set("color", isPrimary ? "#ffffff" : "#486581")
+                .set("border", isPrimary ? "none" : "1px solid #4db6ac")
                 .set("cursor", "pointer")
-                .set("transition", "all 0.3s ease");
+                .set("transition", "all 0.3 ease");
 
         button.getElement().executeJs(
                 "this.addEventListener('mouseover', () => {" +
                         "  this.style.background = '" + (isPrimary ? "#26a69a" : "rgba(77, 182, 172, 0.1)") + "';" +
                         "  this.style.transform = 'translateY(-2px)';" +
-                        "  this.style.boxShadow = '0 5px 15px rgba(0,0,0,0.5)';" +
+                        "  this.style.boxShadow = '0 5px 15px rgba(0,0,0,0.1)';" +
                         "});" +
                         "this.addEventListener('mouseout', () => {" +
                         "  this.style.background = '" + (isPrimary ? "#4db6ac" : "transparent") + "';" +

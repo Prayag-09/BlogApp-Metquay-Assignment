@@ -32,19 +32,19 @@ public class CreatePostView extends VerticalLayout {
 
         setSizeFull();
         setAlignItems(Alignment.CENTER);
-        getStyle().set("background", "linear-gradient(135deg, #1a1a1a, #2c2c2c)").set("padding", "20px");
+        getStyle().set("background", "#f4f4f5").set("padding", "20px");
 
         VerticalLayout card = new VerticalLayout();
         card.setWidth("600px");
         card.setAlignItems(Alignment.CENTER);
         card.getStyle()
-                .set("background", "#2d2d2d")
+                .set("background", "#ffffff")
                 .set("border-radius", "12px")
                 .set("padding", "30px")
-                .set("box-shadow", "0 5px 20px rgba(0,0,0,0.5)");
+                .set("box-shadow", "0 4px 12px rgba(0,0,0,0.1)");
 
         H2 title = new H2("Create New Post");
-        title.getStyle().set("color", "#ffffff"); // Already white, kept for clarity
+        title.getStyle().set("color", "#333333");
 
         TextField titleField = new TextField("Title");
         styleField(titleField);
@@ -55,7 +55,7 @@ public class CreatePostView extends VerticalLayout {
         styleField(contentField);
 
         Button submitButton = new Button("Publish", e -> publishPost());
-        styleButton(submitButton, true); // Primary button, white text
+        styleButton(submitButton, true);
 
         binder.forField(titleField)
                 .withValidator(new StringLengthValidator("Title must be between 5 and 100 characters", 5, 100))
@@ -74,17 +74,35 @@ public class CreatePostView extends VerticalLayout {
         try {
             binder.writeBean(post);
             apiService.createPost(post);
-            Notification.show("Post published successfully!");
+            Notification notification = new Notification("Post published successfully!");
+            notification.getElement().getStyle()
+                    .set("background", "#007bff")
+                    .set("color", "#ffffff")
+                    .set("border-radius", "8px")
+                    .set("padding", "10px");
+            notification.open();
             getUI().ifPresent(ui -> ui.navigate("posts"));
         } catch (ValidationException e) {
-            Notification.show("Please fill in all required fields.");
+            Notification notification = new Notification("Please fill in all required fields.");
+            notification.getElement().getStyle()
+                    .set("background", "#007bff")
+                    .set("color", "#ffffff")
+                    .set("border-radius", "8px")
+                    .set("padding", "10px");
+            notification.open();
         } catch (Exception e) {
             handleError("Failed to publish post: " + e.getMessage(), null);
         }
     }
 
     private void handleError(String message, String redirectRoute) {
-        Notification.show(message);
+        Notification notification = new Notification(message);
+        notification.getElement().getStyle()
+                .set("background", "#007bff")
+                .set("color", "#ffffff")
+                .set("border-radius", "8px")
+                .set("padding", "10px");
+        notification.open();
         if (redirectRoute != null) {
             getUI().ifPresent(ui -> ui.navigate(redirectRoute));
         }
@@ -94,20 +112,20 @@ public class CreatePostView extends VerticalLayout {
         field.getElement().getStyle()
                 .set("width", "100%")
                 .set("border-radius", "8px")
-                .set("background", "#3a3a3a")
-                .set("border", "1px solid #4b4b4b")
+                .set("background", "#ffffff")
+                .set("border", "1px solid #d1d5db")
                 .set("padding", "10px")
                 .set("margin-bottom", "15px")
-                .set("color", "#ffffff"); // Input text is white for visibility
+                .set("color", "#333333");
 
         field.getElement().executeJs(
-                "this.labelElement.style.color = '#d1d5db';" + // Label is light gray for visibility
+                "this.labelElement.style.color = '#666666';" +
                         "this.addEventListener('focus', () => {" +
-                        "  this.style.borderColor = '#4db6ac';" +
-                        "  this.style.boxShadow = '0 0 5px rgba(77, 182, 172, 0.3)';" +
+                        "  this.style.borderColor = '#007bff';" +
+                        "  this.style.boxShadow = '0 0 5px rgba(0,123,255,0.3)';" +
                         "});" +
                         "this.addEventListener('blur', () => {" +
-                        "  this.style.borderColor = '#4b4b4b';" +
+                        "  this.style.borderColor = '#d1d5db';" +
                         "  this.style.boxShadow = 'none';" +
                         "});"
         );
@@ -118,20 +136,20 @@ public class CreatePostView extends VerticalLayout {
                 .set("width", "100%")
                 .set("border-radius", "12px")
                 .set("padding", "12px")
-                .set("background", isPrimary ? "#4db6ac" : "transparent")
-                .set("color", isPrimary ? "#ffffff" : "#d1d5db") // Secondary button text changed to light gray
-                .set("border", isPrimary ? "none" : "1px solid #4db6ac") // Changed border color to teal for consistency
+                .set("background", isPrimary ? "#007bff" : "#ffffff")
+                .set("color", isPrimary ? "#ffffff" : "#333333")
+                .set("border", isPrimary ? "none" : "1px solid #d1d5db")
                 .set("cursor", "pointer")
                 .set("transition", "all 0.3s ease");
 
         button.getElement().executeJs(
                 "this.addEventListener('mouseover', () => {" +
-                        "  this.style.background = '" + (isPrimary ? "#26a69a" : "rgba(77, 182, 172, 0.1)") + "';" +
+                        "  this.style.background = '" + (isPrimary ? "#0056b3" : "#e5e7eb") + "';" +
                         "  this.style.transform = 'translateY(-2px)';" +
-                        "  this.style.boxShadow = '0 5px 15px rgba(0,0,0,0.5)';" +
+                        "  this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';" +
                         "});" +
                         "this.addEventListener('mouseout', () => {" +
-                        "  this.style.background = '" + (isPrimary ? "#4db6ac" : "transparent") + "';" +
+                        "  this.style.background = '" + (isPrimary ? "#007bff" : "#ffffff") + "';" +
                         "  this.style.transform = 'translateY(0)';" +
                         "  this.style.boxShadow = 'none';" +
                         "});"
