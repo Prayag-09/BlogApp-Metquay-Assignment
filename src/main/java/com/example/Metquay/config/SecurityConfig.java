@@ -1,44 +1,65 @@
 package com.example.Metquay.config;
 
-import com.vaadin.flow.spring.security.VaadinWebSecurity;
+import com.example.Metquay.repository.UserRepo;
+import com.example.Metquay.services.Auth.JWTAuth;
+import com.example.Metquay.services.Auth.Auth;
+import com.example.Metquay.security.BlogUserDetails;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-public class SecurityConfig extends VaadinWebSecurity {
+@EnableWebSecurity
+public class SecurityConfig {
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        // Configure logout to redirect to home page with logout parameter
-        http.logout(logout -> logout
-                .logoutSuccessUrl("/?logout")
-        );
-
-        // Configure Vaadin security with custom login page
-        setLoginView(http, "/login");
-
-        // Call parent configuration to set up Vaadin defaults
-        super.configure(http);
+    @Bean
+    public JWTAuth jwtAuth(Auth authService) {
+        return new JWTAuth(authService);
     }
 
-    // Basic in-memory user setup
     @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails user = User.withUsername("user")
-                .password("{noop}password") // {noop} = no encoder
-                .roles("USER")
-                .build();
+    public UserDetailsService userDetailsService(UserRepo userRepo) {
+        return new BlogUserDetails(userRepo);
+    }
 
-        UserDetails admin = User.withUsername("admin")
-                .password("{noop}admin")
-                .roles("USER", "ADMIN")
-                .build();
+    @Bean
+    public AuthenticationManager authenticationManager(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService);
+        provider.setPasswordEncoder(passwordEncoder);
+        return new org.springframework.security.authentication.ProviderManager(provider);
+    }
 
-        return new InMemoryUserDetailsManager(user, admin);
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JWTAuth jwtAuth) throws Exception {
+        return http
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/posts").permitAll()
+                        .requestMatchers("/vaadin/**", "/VAADIN/**").permitAll()
+                        .requestMatchers("/", "/login", "/register").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtAuth, UsernamePasswordAuthenticationFilter.class)
+                .build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 }

@@ -8,13 +8,17 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * @author prayagtushar
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Blogs {
+public class BlogResponse {
     private UUID id;
     private String title;
+    private String subtitle;
     private String content;
     private Author author;
     private Integer readingTime;

@@ -1,0 +1,22 @@
+[part="drawer"] {
+    background: #2d2d2d !important;
+}
+
+[part="drawer"] * {
+    background: transparent !important;
+}
+
+[part="navbar"] {
+    background: linear-gradient(135deg, #1a1a1a, #2c2c2c) !important;
+}
+
+vaadin-notification-card {
+    background: #2d2d2d !important;
+    color: #d1d5db !important;
+    border-radius: 8px !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5) !important;
+}
+
+vaadin-notification-card [slot="content"] {
+    color: #d1d5db !important;
+}
